@@ -1,4 +1,5 @@
 ﻿h1{
+    padding-top:25px;
     text-align:center;
     font-size:64px;
 }
@@ -11,19 +12,68 @@ table, th, tr, td {
     margin-left:auto;
     margin-right:auto;
     font-size:24px;
-    border: 1px solid black;
+    border: 2px solid #0c0386;
     border-collapse: collapse;
     width:auto;
-}
-
-th, tr{
-    padding:10px;
-}
-
-td {
     text-align:center;
+}
+
+th {
+    font-size: 28px;
+    padding: 4px;
 }
 
 #check{
     text-align:center;
+    font-size:24px;
+}
+
+.gradeTable{
+    table-layout: fixed;
+    width: 50%;
+    white-space:nowrap;
+}
+
+tr:nth-child(even) {
+    background:#b3b3b3
+}
+tr:nth-child(odd){
+    background:#ffffff
+}
+
+#input td {
+    padding-top:16px;
+    padding-bottom:16px;
+    background:white;
+}
+
+input {
+    text-align:center;
+}
+
+
+
+button {
+    background-color: #019fff;
+    border: none;
+    color: white;
+    font-weight: bold;
+    font-size: 22px;
+    padding: 8px 28px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 9px #999;
+}
+
+button:hover{
+    background-color: #007bc6;
+}
+
+button:active{
+    background-color: #007bc6;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
 }

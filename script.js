@@ -17,7 +17,7 @@ function addStudent() {
         const cell_2 = row.insertCell(2);
         cell_0.innerHTML = student;
         cell_1.innerHTML = grade;
-        cell_2.innerHTML = "*";
+        cell_2.innerHTML = "";
         document.getElementById("check").innerHTML = "";
     }
     else if (student == "" && (grade < 0 || grade > 100 || grade == "")) {
