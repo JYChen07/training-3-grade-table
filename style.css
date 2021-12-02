@@ -21,6 +21,8 @@ table, th, tr, td {
 th {
     font-size: 28px;
     padding: 4px;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 #check{
