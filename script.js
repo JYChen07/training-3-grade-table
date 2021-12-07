@@ -34,8 +34,8 @@ function addStudent() {
         row.setAttribute('id', 'row' + row_value);
         cell_0.innerHTML = student;
         cell_1.innerHTML = grade;
-        cell_2.innerHTML = "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row_value + ");'>";
-        document.getElementById("check").innerHTML = "";
+        cell_2.innerHTML = "<input type='button' value='Edit' id='edit_" + row_value + "' class='save' onclick='edit_row(" + row_value + ");' />" +
+            "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row_value + ");'>";
         console.log(row);
     }
     else if (!verify_student && !verify_grade) {
@@ -51,8 +51,23 @@ function addStudent() {
         document.getElementById("check").innerHTML = "Out of bounds grade input.";
     }
 }
-
+//delete option
 function delete_row(row) {
     const row_del = document.getElementById(`row${row}`);
+    console.log(row_del);
     row_del.remove();
+}
+//edit option
+function edit_row(row) {
+    const tr = document.getElementById(`row${row}`);
+    const td = tr.getElementsByTagName("td");
+    td[0].innerHTML = "<input type='text' name='student' placeholder='Student Name' id='student' value=" + td[0].innerHTML + ">";
+    td[1].innerHTML = "<input type='number' name='grade' placeholder='Grade' id='grade' min='0' max='100' value="+ td[1].innerHTML + ">";
+    td[2].innerHTML = "<input type='button' value='Save' id='save_" + row + "' class='save' onclick='save_row(" + row + ");' />" +
+        "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row + ");' />";
+    console.log(td[2]);
+}
+
+function save_row(row) {
+
 }
