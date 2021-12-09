@@ -53,16 +53,19 @@ function addStudent() {
 //delete option
 function delete_row(row) {
     const row_del = document.getElementById(`row${row}`);
-    console.log(row_del);
     row_del.remove();
+    const tr_edit = document.getElementById(`row_edit${row}`);
+    if (tr_edit != null) {
+        tr_edit.remove();
+    }
 }
 //edit option
 function edit_row(row) {
     const table = document.getElementById('gradeTable');
     const tr = document.getElementById(`row${row}`);
     const td = tr.getElementsByTagName("td");
-    document.getElementById(`row${row}`).style.display = "none";
     const new_row = table.insertRow(parseInt(row) + 1);
+    document.getElementById(`row${row}`).style.display = "none";
     const cell_0 = new_row.insertCell(0);
     const cell_1 = new_row.insertCell(1);
     const cell_2 = new_row.insertCell(2);
@@ -108,7 +111,6 @@ function save_row(row) {
 function cancel_row(row) {
     const tr = document.getElementById(`row${row}`);
     const row_del = document.getElementById(`row_edit${row}`);
-    console.log(row_del);
     row_del.remove();
     document.getElementById(`row${row}`).style.display = "table-row";
 }

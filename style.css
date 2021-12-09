@@ -16,11 +16,16 @@ table, th, tr, td {
     border-collapse: collapse;
     width:auto;
     text-align:center;
+    table-layout:fixed;
 }
 
 th {
     font-size: 28px;
     padding: 4px;
+}
+
+td {
+    padding: 8px;
 }
 
 #check{
