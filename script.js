@@ -64,7 +64,7 @@ function edit_row(row) {
     const table = document.getElementById('gradeTable');
     const tr = document.getElementById(`row${row}`);
     const td = tr.getElementsByTagName("td");
-    const new_row = table.insertRow(parseInt(row) + 1);
+    const new_row = table.insertRow(tr.rowIndex);
     document.getElementById(`row${row}`).style.display = "none";
     const cell_0 = new_row.insertCell(0);
     const cell_1 = new_row.insertCell(1);
