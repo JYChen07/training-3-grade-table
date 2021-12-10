@@ -1,29 +1,44 @@
-
-function verifyName(name) { //verifies if there is a Student Name
+//verify if student name is valid (at least has something in the textbox)
+function verifyName(name) {
     if (typeof name === 'string' && name != "") {
         return true;
     }
     return false;
 }
-
-function verifyGrade(grade) { //verifies if there is a valid grade
+//verify if grade is inputted in a range from 0 to 100
+function verifyGrade(grade) { 
     if (typeof grade === 'number' && grade >= 0 && grade <= 100) {
         return true;
     }
     return false;
 }
-
+//verify function that takes in a name and grade and returns if input is valid
+function verify(name, grade) {
+    stu_ver = verifyName(name);
+    grade_ver = verifyGrade(grade);
+    if (!stu_ver && !grade_ver) {
+        //if there is no valid student and grade print out an error 
+        return document.getElementById("check").innerHTML = "No student and proper grade inputs.";
+    }
+    else if (!stu_ver) {
+        //only invalid student string
+        return document.getElementById("check").innerHTML = "No student name has been inputted.";
+    }
+    else if (!grade_ver) {
+        //only invalid grade score
+        return document.getElementById("check").innerHTML = "Out of bounds grade input.";
+    }
+    else
+        return true;
+}
 // addStudent adds a new row with the Student Name and Grade to the table.
 function addStudent() {
     const student = document.getElementById('student').value;
     const grade = parseInt(document.getElementById('grade').value, 10);
     const table = document.getElementById('gradeTable');
     const row_length = document.getElementById('gradeTable').rows.length;
-    let verify_student = verifyName(student);
-    let verify_grade = verifyGrade(grade);
-    //console.log(verify_student + " - " + verify_grade);
-
-    if (verify_student && verify_grade) {
+    let verified = verify(student, grade);
+    if (verified == true) {
         //checks if there is something inputted in student text box 
         //as well as a value of 0 to 100 for grade score
         const row_value = row_length - 1;
@@ -36,18 +51,6 @@ function addStudent() {
         cell_1.innerHTML = grade;
         cell_2.innerHTML = "<input type='button' value='Edit' id='edit_" + row_value + "' class='edit' onclick='edit_row(" + row_value + ");' />" +
             "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row_value + ");'>";
-    }
-    else if (!verify_student && !verify_grade) {
-        //if there is no valid student and grade print out an error 
-        document.getElementById("check").innerHTML = "No student and proper grade inputs.";
-    }
-    else if (!verify_student) {
-        //only invalid student string
-        document.getElementById("check").innerHTML = "No student name has been inputted.";
-    }
-    else if (!verify_grade) {
-        //only invalid grade score
-        document.getElementById("check").innerHTML = "Out of bounds grade input.";
     }
 }
 //delete option
@@ -76,17 +79,21 @@ function edit_row(row) {
         + "<input type='button' value='Cancel' id='cancel_" + row + "' class='cancel' onclick='cancel_row(" + row + ");' />"
         + "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row + ");' />";
 }
-
+//cancel the edit and return original row
+function cancel_row(row) {
+    const row_del = document.getElementById(`row_edit${row}`);
+    row_del.remove();
+    document.getElementById(`row${row}`).style.display = "table-row";
+}
+//save the edit
 function save_row(row) {
-    const table = document.getElementById('gradeTable');
     const tr = document.getElementById(`row${row}`);
     const td = tr.getElementsByTagName("td");
     const student = document.getElementById('student'+row).value;
     const grade = parseInt(document.getElementById('grade'+row).value, 10);
-    let verify_student = verifyName(student);
-    let verify_grade = verifyGrade(grade);
+    let verified = verify(student, grade);
 
-    if (verify_student && verify_grade) {
+    if (verified == true) {
         //checks if there is something inputted in student text box 
         //as well as a value of 0 to 100 for grade score
         td[0].innerHTML = student;
@@ -95,22 +102,4 @@ function save_row(row) {
             "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row + ");'>";
         cancel_row(row);
     }
-    else if (!verify_student && !verify_grade) {
-        //if there is no valid student and grade print out an error 
-        document.getElementById("check").innerHTML = "No student and proper grade inputs for edit.";
-    }
-    else if (!verify_student) {
-        //only invalid student string
-        document.getElementById("check").innerHTML = "No student name has been inputted for edit.";
-    }
-    else if (!verify_grade) {
-        //only invalid grade score
-        document.getElementById("check").innerHTML = "Out of bounds grade input for edit.";
-    }
-}
-function cancel_row(row) {
-    const tr = document.getElementById(`row${row}`);
-    const row_del = document.getElementById(`row_edit${row}`);
-    row_del.remove();
-    document.getElementById(`row${row}`).style.display = "table-row";
 }
