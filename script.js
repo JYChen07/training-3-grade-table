@@ -103,3 +103,33 @@ function save_row(row) {
         cancel_row(row);
     }
 }
+
+function api_add() {
+    let request = new XMLHttpRequest();
+    let data = "";
+    let name = "";
+    let grade = 0;
+    request.open("GET", "https://randomuser.me/api/?results=1", true);
+    request.onload = function (e) {
+        if (request.readyState === 4 && request.status === 200) {
+            data = request.responseText;
+            data = JSON.parse(data);
+            name = data.results[0].name.first + " " + data.results[0].name.last;
+            grade = data.results[0].dob.age;
+
+            const table = document.getElementById('gradeTable');
+            const row_length = document.getElementById('gradeTable').rows.length;
+            const row_value = row_length - 1;
+            const row = table.insertRow(row_value);
+            const cell_0 = row.insertCell(0);
+            const cell_1 = row.insertCell(1);
+            const cell_2 = row.insertCell(2);
+            row.setAttribute('id', 'row' + row_value);
+            cell_0.innerHTML = name;
+            cell_1.innerHTML = grade;
+            cell_2.innerHTML = "<input type='button' value='Edit' id='edit_" + row_value + "' class='edit' onclick='edit_row(" + row_value + ");' />" +
+                "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row_value + ");'>";
+        }
+    }
+    request.send(null);
+}
