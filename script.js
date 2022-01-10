@@ -1,3 +1,4 @@
+let studentList = [];
 //verify if student name is valid (at least has something in the textbox)
 function verifyName(name) {
     if (typeof name === 'string' && name != "") {
@@ -51,6 +52,13 @@ function addStudent() {
         cell_1.innerHTML = grade;
         cell_2.innerHTML = "<input type='button' value='Edit' id='edit_" + row_value + "' class='edit' onclick='edit_row(" + row_value + ");' />" +
             "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row_value + ");'>";
+        const student_obj = {
+            name: student,
+            grade: grade,
+            edit: false
+        };
+        studentList.push(student_obj);
+        localStorage.setItem("studentList", JSON.stringify(studentList));
     }
 }
 //delete option
@@ -60,7 +68,12 @@ function delete_row(row) {
     const tr_edit = document.getElementById(`row_edit${row}`);
     if (tr_edit != null) {
         tr_edit.remove();
+        student.splice(row, 2);
     }
+    else {
+        studentList.splice(row, 1);
+    }
+    localStorage.setItem("studentList", JSON.stringify(studentList));
 }
 //edit option
 function edit_row(row) {
@@ -78,6 +91,13 @@ function edit_row(row) {
     cell_2.innerHTML = "<input type='button' value='Save' id='save_" + row + "' class='save' onclick='save_row(" + row + ");' />" 
         + "<input type='button' value='Cancel' id='cancel_" + row + "' class='cancel' onclick='cancel_row(" + row + ");' />"
         + "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row + ");' />";
+    const edit_student = {
+        name: td[0].innerHTML,
+        grade: td[1].innerHTML,
+        edit: true
+    };
+    studentList.splice(row, 0, edit_student);
+    localStorage.setItem("studentList", JSON.stringify(studentList));
 }
 //cancel the edit and return original row
 function cancel_row(row) {
@@ -92,10 +112,15 @@ function save_row(row) {
     const student = document.getElementById('student'+row).value;
     const grade = parseInt(document.getElementById('grade'+row).value, 10);
     let verified = verify(student, grade);
-
+    const student_obj = {
+        name: student,
+        grade: grade
+    };
     if (verified == true) {
         //checks if there is something inputted in student text box 
         //as well as a value of 0 to 100 for grade score
+        student
+        localStorage.setItem(JSON.stringify(row), JSON.stringify(student_obj));
         td[0].innerHTML = student;
         td[1].innerHTML = grade;
         td[2].innerHTML = "<input type='button' value='Edit' id='edit_" + row + "' class='edit' onclick='edit_row(" + row + ");' />" +
@@ -109,6 +134,7 @@ function api_add() {
     let data = "";
     let name = "";
     let grade = 0;
+    var student_obj;
     
     request.open("GET", "https://randomuser.me/api/?results=10", true);
     request.onload = function (e) {
@@ -131,7 +157,14 @@ function api_add() {
                 cell_1.innerHTML = grade;
                 cell_2.innerHTML = "<input type='button' value='Edit' id='edit_" + row_value + "' class='edit' onclick='edit_row(" + row_value + ");' />" +
                     "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row_value + ");'>";
+                student_obj = {
+                    name: name,
+                    grade: grade,
+                    edit: false
+                };
+                studentList.push(student_obj);
             }
+            localStorage.setItem("studentList", Json.stringify(studentList));
         }
     }
     request.send(null);
