@@ -39,13 +39,12 @@ function addStudent(student, grade, load) {
         student = document.getElementById('student').value;
     if (grade == null)
         grade = parseInt(document.getElementById('grade').value, 10);
-    const table = document.getElementById('gradeTable');
-    const row_length = document.getElementById('gradeTable').rows.length;
+    const table = document.getElementById('tbody');
+    const row_value = document.getElementById('tbody').rows.length;
     let verified = verify(student, grade);
     if (verified == true) {
         //checks if there is something inputted in student text box 
         //as well as a value of 0 to 100 for grade score
-        const row_value = row_length - 1;
         const row = table.insertRow(row_value);
         const cell_0 = row.insertCell(0);
         const cell_1 = row.insertCell(1);
@@ -89,22 +88,29 @@ function addStudent(student, grade, load) {
         for (var i = 0; i < hidden.length; i++) {
             hidden[i].style.display = 'none';
         }
-
         const student_obj = {
             name: student,
             grade: grade,
         };
-        studentList.push(student_obj);
-        localStorage.setItem("studentList", JSON.stringify(studentList));
-        
+        if (load != true) {
+            studentList.push(student_obj);
+            localStorage.setItem("studentList", JSON.stringify(studentList));
+        }
     }
 }
 //delete option
 function delete_row(row) {
     const row_del = document.getElementById(`row${row}`);
     row_del.remove();
-    studentList.splice(row, 1);
+    var del = parseInt(row);
+    console.log(del);
+    studentList.splice(del, 1);
     localStorage.setItem("studentList", JSON.stringify(studentList));
+
+    var tbody = document.getElementById('tbody');
+    tbody.innerHTML = "";
+    reload(true);
+
 }
 //edit option
 function edit_row(row) {
@@ -151,11 +157,12 @@ function save_row(row) {
 
         const student_obj = {
             name: student,
-            grade: grade,
+            grade: grade,   
         };
-        studentList.splice(row, 1, student_obj);
+        var del = parseInt(row);
+        studentList.splice(parseInt(row), 1, student_obj);
         localStorage.setItem("studentList", JSON.stringify(studentList));
-
+        
     }
 }
 
@@ -180,13 +187,12 @@ function api_add() {
     request.send(null);
 }
 
-function reload() {
+function reload(load) {
 data = JSON.parse(window.localStorage.getItem('studentList'));
     for (let index = 0; index < data.length; index++) {
         name = data[index].name;
         grade = data[index].grade;
-        load = true;
-        addStudent(name, parseInt(grade, 10));
+        addStudent(name, parseInt(grade, 10), load);
     }
 }
 
