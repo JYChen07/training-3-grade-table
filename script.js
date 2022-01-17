@@ -1,4 +1,5 @@
 let studentList = [];
+
 //verify if student name is valid (at least has something in the textbox)
 function verifyName(name) {
     if (typeof name === 'string' && name != "") {
@@ -33,9 +34,11 @@ function verify(name, grade) {
         return true;
 }
 // addStudent adds a new row with the Student Name and Grade to the table.
-function addStudent() {
-    const student = document.getElementById('student').value;
-    const grade = parseInt(document.getElementById('grade').value, 10);
+function addStudent(student, grade, load) {
+    if (student == null)
+        student = document.getElementById('student').value;
+    if (grade == null)
+        grade = parseInt(document.getElementById('grade').value, 10);
     const table = document.getElementById('gradeTable');
     const row_length = document.getElementById('gradeTable').rows.length;
     let verified = verify(student, grade);
@@ -48,62 +51,82 @@ function addStudent() {
         const cell_1 = row.insertCell(1);
         const cell_2 = row.insertCell(2);
         row.setAttribute('id', 'row' + row_value);
-        cell_0.innerHTML = student;
-        cell_1.innerHTML = grade;
-        cell_2.innerHTML = "<input type='button' value='Edit' id='edit_" + row_value + "' class='edit' onclick='edit_row(" + row_value + ");' />" +
+
+        var div_stu = document.createElement("div");
+        div_stu.textContent = student;
+        div_stu.setAttribute("class", "original");
+        cell_0.appendChild(div_stu);
+
+        var div_grade = document.createElement("div");
+        div_grade.textContent = grade;
+        div_grade.setAttribute("class", "original");
+        cell_1.appendChild(div_grade);
+
+        var div_options = document.createElement("div");
+        div_options.innerHTML = "<input type='button' value='Edit' onclick='edit_row(" + row_value + ");' />" +
             "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row_value + ");'>";
+        div_options.setAttribute("class", "original");
+        cell_2.appendChild(div_options);
+
+        var div_edit_stu = document.createElement("div");
+        div_edit_stu.innerHTML = "<input type='text' id='student" + row_value + "' value=" + student + ">";
+        div_edit_stu.setAttribute("class", "edit");
+        cell_0.appendChild(div_edit_stu);
+
+        var div_edit_grade = document.createElement("div");
+        div_edit_grade.innerHTML = "<input type='number' id='grade" + row_value + "' min='0' max='100' value=" + grade + ">";
+        div_edit_grade.setAttribute("class", "edit");
+        cell_1.appendChild(div_edit_grade);
+
+        var div_edit_options = document.createElement("div");
+        div_edit_options.innerHTML = "<input type='button' value='Save' id='save_" + row_value + "' class='save' onclick='save_row(" + row_value + ");' />"
+            + "<input type='button' value='Cancel' id='cancel_" + row_value + "' class='cancel' onclick='cancel_row(" + row_value + ");' />"
+            + "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row_value + ");' />";
+        div_edit_options.setAttribute("class", "edit");
+        cell_2.appendChild(div_edit_options);
+
+        const hidden = document.getElementById(`row${row_value}`).getElementsByClassName("edit");
+        for (var i = 0; i < hidden.length; i++) {
+            hidden[i].style.display = 'none';
+        }
+
         const student_obj = {
             name: student,
             grade: grade,
-            edit: false
         };
         studentList.push(student_obj);
         localStorage.setItem("studentList", JSON.stringify(studentList));
+        
     }
 }
 //delete option
 function delete_row(row) {
     const row_del = document.getElementById(`row${row}`);
     row_del.remove();
-    const tr_edit = document.getElementById(`row_edit${row}`);
-    if (tr_edit != null) {
-        tr_edit.remove();
-        student.splice(row, 2);
-    }
-    else {
-        studentList.splice(row, 1);
-    }
+    studentList.splice(row, 1);
     localStorage.setItem("studentList", JSON.stringify(studentList));
 }
 //edit option
 function edit_row(row) {
-    const table = document.getElementById('gradeTable');
-    const tr = document.getElementById(`row${row}`);
-    const td = tr.getElementsByTagName("td");
-    const new_row = table.insertRow(tr.rowIndex);
-    document.getElementById(`row${row}`).style.display = "none";
-    const cell_0 = new_row.insertCell(0);
-    const cell_1 = new_row.insertCell(1);
-    const cell_2 = new_row.insertCell(2);
-    new_row.setAttribute('id', 'row_edit' + row);
-    cell_0.innerHTML = "<input type='text' name='student' placeholder='Student Name' id='student"+row+"' value=" + td[0].innerHTML + ">";
-    cell_1.innerHTML = "<input type='number' name='grade' placeholder='Grade' id='grade"+row+"' min='0' max='100' value="+ td[1].innerHTML + ">";
-    cell_2.innerHTML = "<input type='button' value='Save' id='save_" + row + "' class='save' onclick='save_row(" + row + ");' />" 
-        + "<input type='button' value='Cancel' id='cancel_" + row + "' class='cancel' onclick='cancel_row(" + row + ");' />"
-        + "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row + ");' />";
-    const edit_student = {
-        name: td[0].innerHTML,
-        grade: td[1].innerHTML,
-        edit: true
-    };
-    studentList.splice(row, 0, edit_student);
-    localStorage.setItem("studentList", JSON.stringify(studentList));
+    const original = document.getElementById(`row${row}`).getElementsByClassName("original");
+    const edit = document.getElementById(`row${row}`).getElementsByClassName("edit");
+    for (var i = 0; i < original.length; i++) {
+        original[i].style.display = 'none';
+    }
+    for (var j = 0; j < edit.length; j++) {
+        edit[j].style.display = 'initial';
+    }
 }
 //cancel the edit and return original row
 function cancel_row(row) {
-    const row_del = document.getElementById(`row_edit${row}`);
-    row_del.remove();
-    document.getElementById(`row${row}`).style.display = "table-row";
+    const original = document.getElementById(`row${row}`).getElementsByClassName("original");
+    const edit = document.getElementById(`row${row}`).getElementsByClassName("edit");
+    for (var i = 0; i < original.length; i++) {
+        original[i].style.display = 'initial';
+    }
+    for (var j = 0; j < edit.length; j++) {
+        edit[j].style.display = 'none'; 
+    }
 }
 //save the edit
 function save_row(row) {
@@ -112,20 +135,27 @@ function save_row(row) {
     const student = document.getElementById('student'+row).value;
     const grade = parseInt(document.getElementById('grade'+row).value, 10);
     let verified = verify(student, grade);
-    const student_obj = {
-        name: student,
-        grade: grade
-    };
     if (verified == true) {
         //checks if there is something inputted in student text box 
         //as well as a value of 0 to 100 for grade score
-        student
-        localStorage.setItem(JSON.stringify(row), JSON.stringify(student_obj));
-        td[0].innerHTML = student;
-        td[1].innerHTML = grade;
-        td[2].innerHTML = "<input type='button' value='Edit' id='edit_" + row + "' class='edit' onclick='edit_row(" + row + ");' />" +
+        const original = document.getElementById(`row${row}`).getElementsByClassName("original");
+        original[0].textContent = student;
+        original[1].textContent = grade;
+        original[2].innerHTML = "<input type='button' value='Edit' onclick='edit_row(" + row + ");' />" +
             "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row + ");'>";
+        const edit = document.getElementById(`row${row}`).getElementsByClassName("edit");
+        console.log(edit[0]);
+        edit[0].setAttribute = ("text", student);
+        edit[1].setAttribute = ("number", grade);
         cancel_row(row);
+
+        const student_obj = {
+            name: student,
+            grade: grade,
+        };
+        studentList.splice(row, 1, student_obj);
+        localStorage.setItem("studentList", JSON.stringify(studentList));
+
     }
 }
 
@@ -134,7 +164,6 @@ function api_add() {
     let data = "";
     let name = "";
     let grade = 0;
-    var student_obj;
     
     request.open("GET", "https://randomuser.me/api/?results=10", true);
     request.onload = function (e) {
@@ -144,28 +173,23 @@ function api_add() {
             for (let index = 0; index < 10; index++) {
                 name = data.results[index].name.first + " " + data.results[index].name.last;
                 grade = data.results[index].dob.age;
-    
-                const table = document.getElementById('gradeTable');
-                const row_length = document.getElementById('gradeTable').rows.length;
-                const row_value = row_length - 1;
-                const row = table.insertRow(row_value);
-                const cell_0 = row.insertCell(0);
-                const cell_1 = row.insertCell(1);
-                const cell_2 = row.insertCell(2);
-                row.setAttribute('id', 'row' + row_value);
-                cell_0.innerHTML = name;
-                cell_1.innerHTML = grade;
-                cell_2.innerHTML = "<input type='button' value='Edit' id='edit_" + row_value + "' class='edit' onclick='edit_row(" + row_value + ");' />" +
-                    "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row_value + ");'>";
-                student_obj = {
-                    name: name,
-                    grade: grade,
-                    edit: false
-                };
-                studentList.push(student_obj);
+                addStudent(name, parseInt(grade, 10));
             }
-            localStorage.setItem("studentList", Json.stringify(studentList));
         }
     }
     request.send(null);
 }
+
+function reload() {
+data = JSON.parse(window.localStorage.getItem('studentList'));
+    for (let index = 0; index < data.length; index++) {
+        name = data[index].name;
+        grade = data[index].grade;
+        load = true;
+        addStudent(name, parseInt(grade, 10));
+    }
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    reload();
+})
