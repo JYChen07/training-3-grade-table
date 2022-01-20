@@ -1,4 +1,4 @@
-let studentList = [];
+let counter = 0;
 
 //verify if student name is valid (at least has something in the textbox)
 function verifyName(name) {
@@ -34,11 +34,15 @@ function verify(name, grade) {
         return true;
 }
 // addStudent adds a new row with the Student Name and Grade to the table.
-function addStudent(student, grade, load) {
+function addStudent(student, grade, id,  load) {
     if (student == null)
         student = document.getElementById('student').value;
     if (grade == null)
         grade = parseInt(document.getElementById('grade').value, 10);
+    if (id == null){
+        counter++;
+        id = counter;
+    }
     const table = document.getElementById('tbody');
     const row_value = document.getElementById('tbody').rows.length;
     let verified = verify(student, grade);
@@ -49,7 +53,7 @@ function addStudent(student, grade, load) {
         const cell_0 = row.insertCell(0);
         const cell_1 = row.insertCell(1);
         const cell_2 = row.insertCell(2);
-        row.setAttribute('id', 'row' + row_value);
+        row.setAttribute('id', 'row' + id);
 
         var div_stu = document.createElement("div");
         div_stu.textContent = student;
@@ -62,29 +66,29 @@ function addStudent(student, grade, load) {
         cell_1.appendChild(div_grade);
 
         var div_options = document.createElement("div");
-        div_options.innerHTML = "<input type='button' value='Edit' onclick='edit_row(" + row_value + ");' />" +
-            "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row_value + ");'>";
+        div_options.innerHTML = "<input type='button' value='Edit' onclick='edit_row(" + id + ");' />" +
+            "<input type='button' value='Delete' class='delete' onclick='delete_row(" + id + ");'>";
         div_options.setAttribute("class", "original");
         cell_2.appendChild(div_options);
 
         var div_edit_stu = document.createElement("div");
-        div_edit_stu.innerHTML = "<input type='text' id='student" + row_value + "' value=" + student + ">";
+        div_edit_stu.innerHTML = "<input type='text' id='"`student${id}` + "value="`'${student}'`;
         div_edit_stu.setAttribute("class", "edit");
         cell_0.appendChild(div_edit_stu);
 
         var div_edit_grade = document.createElement("div");
-        div_edit_grade.innerHTML = "<input type='number' id='grade" + row_value + "' min='0' max='100' value=" + grade + ">";
+        div_edit_grade.innerHTML = "<input type='number' id='grade" + id + "' min='0' max='100' value=" + grade + ">";
         div_edit_grade.setAttribute("class", "edit");
         cell_1.appendChild(div_edit_grade);
 
         var div_edit_options = document.createElement("div");
-        div_edit_options.innerHTML = "<input type='button' value='Save' id='save_" + row_value + "' class='save' onclick='save_row(" + row_value + ");' />"
-            + "<input type='button' value='Cancel' id='cancel_" + row_value + "' class='cancel' onclick='cancel_row(" + row_value + ");' />"
-            + "<input type='button' value='Delete' class='delete' onclick='delete_row(" + row_value + ");' />";
+        div_edit_options.innerHTML = "<input type='button' value='Save' id='save_" + id + "' class='save' onclick='save_row(" + id + ");' />"
+            + "<input type='button' value='Cancel' id='cancel_" + id + "' class='cancel' onclick='cancel_row(" + id + ");' />"
+            + "<input type='button' value='Delete' class='delete' onclick='delete_row(" + id + ");' />";
         div_edit_options.setAttribute("class", "edit");
         cell_2.appendChild(div_edit_options);
 
-        const hidden = document.getElementById(`row${row_value}`).getElementsByClassName("edit");
+        const hidden = document.getElementById(`row${id}`).getElementsByClassName("edit");
         for (var i = 0; i < hidden.length; i++) {
             hidden[i].style.display = 'none';
         }
@@ -93,8 +97,8 @@ function addStudent(student, grade, load) {
             grade: grade,
         };
         if (load != true) {
-            studentList.push(student_obj);
-            localStorage.setItem("studentList", JSON.stringify(studentList));
+            localStorage.setItem(id, JSON.stringify(student_obj));
+            localStorage.setItem("counter", counter);
         }
     }
 }
@@ -103,15 +107,10 @@ function delete_row(row) {
     const row_del = document.getElementById(`row${row}`);
     row_del.remove();
     var del = parseInt(row);
-    console.log(del);
-    studentList.splice(del, 1);
-    localStorage.setItem("studentList", JSON.stringify(studentList));
-
-    var tbody = document.getElementById('tbody');
-    tbody.innerHTML = "";
-    reload(true);
-
+    localStorage.removeItem(row);
 }
+
+
 //edit option
 function edit_row(row) {
     const original = document.getElementById(`row${row}`).getElementsByClassName("original");
@@ -159,9 +158,7 @@ function save_row(row) {
             name: student,
             grade: grade,   
         };
-        var del = parseInt(row);
-        studentList.splice(parseInt(row), 1, student_obj);
-        localStorage.setItem("studentList", JSON.stringify(studentList));
+        window.localStorage.setItem(parseInt(row), JSON.stringify(student_obj));
         
     }
 }
@@ -187,15 +184,20 @@ function api_add() {
     request.send(null);
 }
 
-function reload(load) {
-data = JSON.parse(window.localStorage.getItem('studentList'));
-    for (let index = 0; index < data.length; index++) {
-        name = data[index].name;
-        grade = data[index].grade;
-        addStudent(name, parseInt(grade, 10), load);
+function reload() {
+var key = Object.keys(window.localStorage);
+
+    for (let index = 0; index < key.length; index++) {
+        if(key[index] == 'counter'){
+            counter = JSON.parse(localStorage[key[index]]);
+        }
+        else{
+        var student = JSON.parse(localStorage[key[index]]);
+        addStudent(student.name, student.grade, key[index], true);
+        }
     }
 }
 
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => { 
     reload();
 })
