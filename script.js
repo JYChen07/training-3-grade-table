@@ -72,8 +72,7 @@ function addStudent(student, grade, id,  load) {
         cell_2.appendChild(div_options);
 
         var div_edit_stu = document.createElement("div");
-        div_edit_stu.innerHTML = "<input type='text' id='"`student${id}` + "value="`'${student}'`;
-        div_edit_stu.setAttribute("class", "edit");
+        div_edit_stu.innerHTML = `<input type='text' class='edit' id='student${id}' value='${student}'>`;
         cell_0.appendChild(div_edit_stu);
 
         var div_edit_grade = document.createElement("div");
