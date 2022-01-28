@@ -1,0 +1,34 @@
+
+<html>
+    <head>
+        <title>Grade Table</title>
+        <link rel="stylesheet" href="style.css" />
+        <script src="script.js"></script>
+    </head>
+
+
+    <body>
+        <h1>Grade Table</h1>
+        <table class="gradeTable" id="gradeTable">
+            <thead>
+                <tr class="tableHead">
+                    <th>Name</th>
+                    <th>Grade</th>
+                    <th>Options</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+
+            </tbody>
+            <tfoot>
+                <tr id="input">
+                    <td><input type="text" name="student" placeholder="Student Name" id="student" /></td>
+                    <td><input type="number" name="grade" placeholder="Grade" id="grade" min="0" max="100" /></td>
+                    <td><button type="button" onclick="addStudent();">Submit</button></td>
+                </tr>
+            </tfoot>
+        </table>
+        <p id="check"></p>
+        <div id="add_api"><button type="button" onclick="api_add();">Random 10</button></div>
+    </body>
+</html>
